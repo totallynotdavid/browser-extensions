@@ -1,0 +1,56 @@
+name: release
+
+# Push a tag named <extension>-v<version>, for example github-shortcuts-v0.2.0.
+# The version must match the extension's package.json.
+on:
+  push:
+    tags:
+      - "*-v*"
+
+jobs:
+  release:
+    name: Zip and publish the tagged extension
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.4.2"
+
+      - name: resolve the extension from the tag
+        run: |
+          name="${TAG%-v*}"
+          version="${TAG##*-v}"
+          if [ ! -f "extensions/$name/package.json" ]; then
+            echo "no extension named $name" >&2
+            exit 1
+          fi
+          packaged="$(bun -e "console.log(require('./extensions/$name/package.json').version)")"
+          if [ "$packaged" != "$version" ]; then
+            echo "tag version $version differs from package.json version $packaged" >&2
+            exit 1
+          fi
+          echo "EXTENSION=$name" >> "$GITHUB_ENV"
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: zip for chromium
+        run: bun run --cwd "extensions/$EXTENSION" zip
+
+      - name: zip for firefox
+        run: bun run --cwd "extensions/$EXTENSION" zip:firefox
+
+      - name: publish the release
+        run: gh release create "$TAG" "extensions/$EXTENSION"/.output/*.zip --title "$TAG" --generate-notes
