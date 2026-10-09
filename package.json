@@ -1,0 +1,24 @@
+{
+  "name": "browser-extensions",
+  "private": true,
+  "workspaces": [
+    "extensions/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "bun run --filter './extensions/*' build",
+    "build:firefox": "bun run --filter './extensions/*' build:firefox",
+    "zip": "bun run --filter './extensions/*' zip",
+    "zip:firefox": "bun run --filter './extensions/*' zip:firefox",
+    "typecheck": "bun run --filter './extensions/*' typecheck",
+    "test": "bun run --filter './extensions/*' test",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run test"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0"
+  }
+}
