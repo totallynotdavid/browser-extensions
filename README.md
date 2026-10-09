@@ -1,49 +1,51 @@
-# <img src="icon.png" width="25"> UI Enhancements Extension
+# browser-extensions
 
-Esta es una extensión de navegador para navegadores basados en Chromium que mejora la interfaz de usuario de Github. Ofrece las siguientes características:
+Small browser extensions for Chromium and Firefox. Each one is its own
+[WXT](https://wxt.dev) project under `extensions/`, in one Bun workspace.
 
-- Muestra los atajos de teclado al menú de navegación de Github.
-- Permite al usuario desactivar la inyección de CSS personalizado en las páginas de Github.
+## Extensions
 
-<br>
-<p align="center">
-    <img src="https://i.imgur.com/7XAFr5y.png" height="115">
-</p>
-<br>
+| Extension                                       | What it does                                                     |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| [github-shortcuts](extensions/github-shortcuts) | Shows the keyboard shortcut next to each item in GitHub's menus. |
 
----
+## Build and load unpacked
 
-<br>
+Install [mise](https://mise.jdx.dev), then:
 
-La extensión está implementada en JavaScript, utilizando la API de extensiones de Chrome. Consta de los siguientes archivos
+```sh
+mise install
+bun install
+bun run build           # Chromium
+bun run build:firefox   # Firefox
+```
 
-- `manifest.json`: El archivo de configuración que define la extensión y sus permisos.
-- `content.js`: El código JavaScript que inyecta el CSS personalizado en las páginas de Github y Reddit, y escucha los mensajes del popup.
-- `popup.html`: El código HTML y CSS para la ventana emergente que aparece cuando el usuario hace clic en el icono de la extensión.
-- `popup.js`: El código JavaScript que gestiona la interacción con la interfaz de usuario de la ventana emergente.
+Each build lands in `extensions/<name>/.output/`.
 
-## Instalación
+- **Chromium:** open `chrome://extensions`, turn on Developer mode, choose Load
+  unpacked, and select `extensions/<name>/.output/chrome-mv3`.
+- **Firefox:** open `about:debugging#/runtime/this-firefox`, choose Load
+  Temporary Add-on, and select
+  `extensions/<name>/.output/firefox-mv3/manifest.json`.
 
-Para instalar la extensión, siga estos pasos:
+To develop one extension with reload on edit, run
+`bun run --cwd extensions/<name> dev` (or `dev:firefox`).
 
-1. Clona o descarga el repositorio en tu ordenador local
+Other root scripts: `bun run test`, `bun run lint`, `bun run typecheck`,
+`bun run format`, and `bun run check`, which runs all of them.
 
-    `git clone https://github.com/totallynotdavid/UI-Enhancements-Extension`
+## Add an extension
 
-2. Ve a `chrome://extensions` si usas Google Chrome o `edge://extensions` si usas Edge.
-3. Activa el "Modo desarrollador" en la esquina superior derecha.
-4. Haz clic en "Cargar desempaquetada" y selecciona la carpeta en la que descargaste la extensión.
-5. La extensión debería aparecer ahora en la lista de extensiones instaladas.
+1. Copy `package.json`, `wxt.config.ts`, `tsconfig.json` and `vitest.config.ts`
+   from an existing extension into `extensions/<name>/`.
+2. Set `name` and `version` in its `package.json` and the manifest fields in its
+   `wxt.config.ts`.
+3. Add its code under `entrypoints/` and its tests under `tests/`.
+4. Run `bun install`. The root scripts and CI pick the new folder up.
 
-<br>
-<p align="center">
-    <img src="https://i.imgur.com/5xEgsNp.png">
-</p>
+## Release
 
-## Uso
-
-Para utilizar la extensión, siga estos pasos:
-
-1. Dirígete a Github.
-2. Haga clic en el icono de la extensión en la esquina superior derecha del navegador.
-3. Haga clic en la casilla de verificación para desactivar la inyección de CSS personalizado, si lo desea.
+CI builds every extension on each push and pull request. Push a tag named
+`<extension>-v<version>`, for example `github-shortcuts-v0.2.0`, to zip that
+extension for Chromium and Firefox and attach the zips to a GitHub release. The
+version must match the extension's `package.json`.
