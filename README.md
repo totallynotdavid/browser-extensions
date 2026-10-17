@@ -15,12 +15,12 @@ Install [mise](https://mise.jdx.dev), then:
 
 ```sh
 mise install
-bun install
-bun run build           # Chromium
-bun run build:firefox   # Firefox
+mise run install
+mise run build
 ```
 
-Each build lands in `extensions/<name>/.output/`.
+The build covers Chromium and Firefox. Each build lands in
+`extensions/<name>/.output/`.
 
 - **Chromium:** open `chrome://extensions`, turn on Developer mode, choose Load
   unpacked, and select `extensions/<name>/.output/chrome-mv3`.
@@ -31,8 +31,9 @@ Each build lands in `extensions/<name>/.output/`.
 To develop one extension with reload on edit, run
 `bun run --cwd extensions/<name> dev` (or `dev:firefox`).
 
-Other root scripts: `bun run test`, `bun run lint`, `bun run typecheck`,
-`bun run format`, and `bun run check`, which runs all of them.
+Other tasks: `mise run test`, `mise run lint`, `mise run typecheck`,
+`mise run fix` (safe fixes and formatting), and `mise run check`, which runs
+every check and the build without writing source files.
 
 ## Add an extension
 
@@ -41,11 +42,12 @@ Other root scripts: `bun run test`, `bun run lint`, `bun run typecheck`,
 2. Set `name` and `version` in its `package.json` and the manifest fields in its
    `wxt.config.ts`.
 3. Add its code under `entrypoints/` and its tests under `tests/`.
-4. Run `bun install`. The root scripts and CI pick the new folder up.
+4. Run `mise run install`. The root tasks and CI pick the new folder up.
 
 ## Release
 
-CI builds every extension on each push and pull request. Push a tag named
+CI runs `mise run check` on each push and pull request. Push a tag named
 `<extension>-v<version>`, for example `github-shortcuts-v0.2.0`, to zip that
 extension for Chromium and Firefox and attach the zips to a GitHub release. The
-version must match the extension's `package.json`.
+version must match the extension's `package.json`. To zip locally, run
+`mise run zip`, or `EXTENSION=<name> mise run zip` for one extension.
