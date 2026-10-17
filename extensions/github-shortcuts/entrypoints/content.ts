@@ -2,7 +2,7 @@ import { defineContentScript } from "wxt/utils/define-content-script";
 
 import { showShortcuts } from "../src/settings";
 
-export const STYLE_ID = "github-shortcuts-badges";
+const STYLE_ID = "github-shortcuts-badges";
 
 // GitHub puts the shortcut of a menu item in its data-hotkey attribute. The
 // selected item already shows its own hint.
