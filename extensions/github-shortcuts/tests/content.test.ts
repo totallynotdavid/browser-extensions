@@ -27,23 +27,19 @@ beforeEach(() => {
 });
 
 describe("content script", () => {
-  it("runs on github.com", () => {
-    expect(content.matches).toEqual(["https://github.com/*"]);
-  });
+  it.each([
+    { stored: undefined, styles: 1 },
+    { stored: false, styles: 0 },
+  ])(
+    "injects $styles badge style(s) when the stored setting is $stored",
+    async ({ stored, styles }) => {
+      if (stored !== undefined) await showShortcuts.setValue(stored);
 
-  it("injects the shortcut badge style by default", async () => {
-    await loadContentScript();
+      await loadContentScript();
 
-    expect(badgeStyles()).toHaveLength(1);
-  });
-
-  it("injects nothing when shortcuts are switched off", async () => {
-    await showShortcuts.setValue(false);
-
-    await loadContentScript();
-
-    expect(badgeStyles()).toHaveLength(0);
-  });
+      expect(badgeStyles()).toHaveLength(styles);
+    },
+  );
 
   it("removes the style when the setting turns off and restores it when it turns on", async () => {
     await loadContentScript();

@@ -1,7 +1,5 @@
 name: release
 
-# Push a tag named <extension>-v<version>, for example github-shortcuts-v0.2.0.
-# The version must match the extension's package.json.
 on:
   push:
     tags:
