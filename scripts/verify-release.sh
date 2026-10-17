@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Validates that TAG names an extension at its package.json version.
-# Writes EXTENSION to GITHUB_ENV for later workflow steps.
 set -euo pipefail
 
 name="${TAG%-v*}"
