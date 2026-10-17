@@ -24,33 +24,17 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version: "1.4.2"
+      - uses: jdx/mise-action@v5
 
       - name: resolve the extension from the tag
-        run: |
-          name="${TAG%-v*}"
-          version="${TAG##*-v}"
-          if [ ! -f "extensions/$name/package.json" ]; then
-            echo "no extension named $name" >&2
-            exit 1
-          fi
-          packaged="$(bun -e "console.log(require('./extensions/$name/package.json').version)")"
-          if [ "$packaged" != "$version" ]; then
-            echo "tag version $version differs from package.json version $packaged" >&2
-            exit 1
-          fi
-          echo "EXTENSION=$name" >> "$GITHUB_ENV"
+        run: mise run release:verify
 
-      - name: install dependencies
-        run: bun install --frozen-lockfile
+      - run: mise run install
 
-      - name: zip for chromium
-        run: bun run --cwd "extensions/$EXTENSION" zip
-
-      - name: zip for firefox
-        run: bun run --cwd "extensions/$EXTENSION" zip:firefox
+      - name: zip for chromium and firefox
+        run: mise run zip
 
       - name: publish the release
-        run: gh release create "$TAG" "extensions/$EXTENSION"/.output/*.zip --title "$TAG" --generate-notes
+        run:
+          gh release create "$TAG" "extensions/$EXTENSION"/.output/*.zip --title
+          "$TAG" --generate-notes

@@ -1,4 +1,5 @@
 {
   "printWidth": 80,
-  "ignorePatterns": ["**/*.md", "bun.lock", "**/.output/**", "**/.wxt/**"]
+  "proseWrap": "always",
+  "ignorePatterns": ["bun.lock", "**/.output/**", "**/.wxt/**"]
 }
