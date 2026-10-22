@@ -1,8 +1,5 @@
-// Usage: bun scripts/verify-release.ts source|built
-//
-// With TAG set (`<extension>-v<version>`) it checks that one extension against
-// the tag. Without it (a dry run) it checks every extension against its own
-// package.json version.
+// TAG selects one extension by its `<extension>-v<version>` value.
+// Without TAG, check every extension against its package.json version.
 import { appendFileSync, existsSync, readdirSync, readFileSync } from "node:fs";
 
 const phase = process.argv[2];
