@@ -49,6 +49,16 @@ check and the build without writing source files.
 
 CI runs `bun run check` on each push and pull request. Push a tag named
 `<extension>-v<version>`, for example `github-shortcuts-v0.2.0`, to zip that
-extension for Chromium and Firefox and attach the zips to a GitHub release. The
-version must match the extension's `package.json`. To zip locally, run
-`bun run zip`, or `EXTENSION=<name> bun run zip` for one extension.
+extension for Chromium and Firefox and attach the zips to a GitHub release.
+
+Each extension keeps its notes in `extensions/<name>/release-notes.md`. The
+first line must be `<name> <version> is out.`. The release body is that file
+followed by GitHub's generated change list. The release run fails when the tag
+version is not the `package.json` version or the built `manifest.json` version,
+or when the first line is wrong.
+
+The release workflow also runs on pull requests and manual dispatch. Without a
+tag it checks every extension against its own `package.json` version, builds and
+zips them, and keeps the zips as a workflow artifact. It creates no release. To
+zip locally, run `bun run zip`, or `EXTENSION=<name> bun run zip` for one
+extension.
