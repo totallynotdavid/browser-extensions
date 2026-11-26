@@ -8,6 +8,7 @@ Small browser extensions for Chromium and Firefox. Each one is its own
 | Extension                                       | What it does                                                     |
 | ----------------------------------------------- | ---------------------------------------------------------------- |
 | [github-shortcuts](extensions/github-shortcuts) | Shows the keyboard shortcut next to each item in GitHub's menus. |
+| [peru-press](extensions/peru-press)             | Removes the client-side paywall on Grupo El Comercio news sites. |
 
 ## Build and load unpacked
 
